@@ -8,8 +8,9 @@ var notify      = require('gulp-notify');
 var plumber     = require('gulp-plumber');
 var htmlhint    = require('gulp-htmlhint');
 var server      = require('gulp-server-livereload');
-var babel       = require('gulp-babel');
-var allScripts  = require('./scripts.json');
+var babelify    = require('babelify');
+var source      = require('vinyl-source-stream');
+var browserify  = require('browserify');
 
 
 var notifyError = function() {
@@ -20,15 +21,16 @@ var notifyError = function() {
 
 
 //================================================
-//  BABEL
+//  BABEL + BROWSERIFY = BABELIFY
 //================================================
 
-gulp.task('babel', function () {
-  return gulp.src(allScripts.scripts)
-    .pipe(notifyError())
-    .pipe(concat("app.js"))
-    .pipe(babel())
-    .pipe(gulp.dest('app/js/dist'));
+gulp.task('babelify', function() {
+  browserify({ entries: './app/js/main.js', debug: true })
+  .transform(babelify)
+  .bundle()
+  .on("error", function (err) { console.log(err.message); })
+  .pipe(source('app.js'))
+  .pipe(gulp.dest('./app/js/dist/'));
 });
 
 
@@ -43,7 +45,7 @@ gulp.task('watchlist', function() {
   gulp.watch('./app/sass/*.scss', ['sass']);
   gulp.watch('./bower.json',      ['bower']);
   gulp.watch('./app/index.html',  ['hint:html']);
-  gulp.watch(['./app/js/**/*.js', '!./app/js/dist/app.js'],  ['babel']);
+  gulp.watch(['./app/js/**/*.js', '!./app/js/dist/app.js'],  ['babelify']);
 });
 
 //================================================

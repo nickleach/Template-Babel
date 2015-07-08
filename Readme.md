@@ -13,17 +13,9 @@ This template contains some simple `gulp` tasks. They are as follows:
 
 ## Babel
 
-This template is set up to make use of ES2015 (ES6) and using Babel as a transpiler. Since we are not using `wiredep` or other tool, you'll need to manually specify your scripts in the order you want them concatenated in the `scripts.json` file. Also, because of this, you will no longer need to add any scripts to your `index.html` file other than your vendor files, which should never be transpiled.
+This template is set up to make use of ES2015 (ES6) and using Babel as a transpiler. You will write all of your code in your `main.js` file and that will compile/transpile down to an `app.js` file which is read by your `index.html` file.
 
-```json
-{
-  "scripts" : [
-    "app/js/main.js",
-    "app/js/views/mainView.js",
-    "app/js/controllers/mainCtrl.js"
-  ]
-}
-```
+This build requires the use of [ES2015 Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
 
 ## Lastly
 
