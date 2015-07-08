@@ -6,10 +6,10 @@ var sass        = require('gulp-sass');
 var bower       = require('main-bower-files');
 var notify      = require('gulp-notify');
 var plumber     = require('gulp-plumber');
-var jshint      = require('gulp-jshint');
-var stylish     = require('jshint-stylish');
 var htmlhint    = require('gulp-htmlhint');
 var server      = require('gulp-server-livereload');
+var babel       = require('gulp-babel');
+var allScripts  = require('./scripts.json');
 
 
 var notifyError = function() {
@@ -20,6 +20,19 @@ var notifyError = function() {
 
 
 //================================================
+//  BABEL
+//================================================
+
+gulp.task('babel', function () {
+  return gulp.src(allScripts.scripts)
+    .pipe(notifyError())
+    .pipe(concat("app.js"))
+    .pipe(babel())
+    .pipe(gulp.dest('app/js/dist'));
+});
+
+
+//================================================
 //  WATCH
 //================================================
 
@@ -27,10 +40,10 @@ var notifyError = function() {
 gulp.task('watch', ['watchlist', 'webserver']);
 
 gulp.task('watchlist', function() {
-  gulp.watch('./app/sass/*.scss',     ['sass']);
+  gulp.watch('./app/sass/*.scss', ['sass']);
   gulp.watch('./bower.json',      ['bower']);
-  gulp.watch('./app/index.html',      ['hint:html']);
-  gulp.watch('./app/js/**/*.js',         ['hint:js']);
+  gulp.watch('./app/index.html',  ['hint:html']);
+  gulp.watch(['./app/js/**/*.js', '!./app/js/dist/app.js'],  ['babel']);
 });
 
 //================================================
@@ -49,14 +62,6 @@ gulp.task('webserver', function() {
 //================================================
 //  HINT
 //================================================
-
-gulp.task('hint:js', function() {
-  return gulp.src(['./app/js/*.js', './app/js/**/*.js', '!./app/js/vendor/*'])
-    .pipe(notifyError())
-    .pipe(jshint())
-    .pipe(jshint.reporter('fail'))
-    .pipe(jshint.reporter('jshint-stylish'));
-});
 
 gulp.task('hint:html', function() {
   return gulp.src('app/index.html')
