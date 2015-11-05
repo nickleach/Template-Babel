@@ -1,1 +1,1 @@
-console.log('Angular Rocks', angular);
+console.log('Angular Rocks', angular)

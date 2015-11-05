@@ -6,6 +6,8 @@ var sass        = require('gulp-sass');
 var bower       = require('main-bower-files');
 var notify      = require('gulp-notify');
 var plumber     = require('gulp-plumber');
+var jshint      = require('gulp-jshint');
+var stylish     = require('jshint-stylish');
 var htmlhint    = require('gulp-htmlhint');
 var server      = require('gulp-server-livereload');
 var babelify    = require('babelify');
@@ -45,7 +47,7 @@ gulp.task('watchlist', function() {
   gulp.watch('./app/sass/*.scss', ['sass']);
   gulp.watch('./bower.json',      ['bower']);
   gulp.watch('./app/index.html',  ['hint:html']);
-  gulp.watch(['./app/js/**/*.js', '!./app/js/dist/app.js'],  ['babelify']);
+  gulp.watch(['./app/js/**/*.js', '!./app/js/dist/app.js'],  ['hint:js', 'babelify']);
 });
 
 //================================================
@@ -64,6 +66,13 @@ gulp.task('webserver', function() {
 //================================================
 //  HINT
 //================================================
+gulp.task('hint:js', function() {
+  return gulp.src(['./app/js/*.js', './app/js/**/*.js', '!./app/js/vendor/*', '!./app/js/dist/app.js'])
+    .pipe(notifyError())
+    .pipe(jshint({"esnext" : true}))
+    .pipe(jshint.reporter('fail'))
+    .pipe(jshint.reporter('jshint-stylish'));
+});
 
 gulp.task('hint:html', function() {
   return gulp.src('app/index.html')
